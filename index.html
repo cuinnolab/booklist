@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Henry Kravis — Deep Research Reading Dashboard</title>
+<title>Henry Kravis Suggested Reading Dashboard</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -97,6 +97,75 @@ body{
   width:3px;height:16px;background:var(--raf-red);border-radius:0 2px 2px 0;
 }
 
+/* ── SIDEBAR DESKTOP COLLAPSER BUTTON ── */
+.sidebar-collapser{
+  position:absolute;top:18px;right:14px;
+  width:26px;height:26px;
+  background:var(--accent-50);border:1px solid var(--accent-200);
+  border-radius:var(--radius-md);color:var(--raf-navy);
+  font-size:15px;line-height:1;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all var(--dur-fast) var(--ease-out);
+  flex-shrink:0;
+}
+.sidebar-collapser:hover{background:var(--accent-100);border-color:var(--accent-300);}
+@media(max-width:768px){.sidebar-collapser{display:none;}}
+
+/* ── SIDEBAR PULL TAB (visible when collapsed) ── */
+@keyframes jumpPlus{
+  0%,16%,100%{transform:translateY(0) scale(1);}
+  5%          {transform:translateY(-6px) scale(1.25);}
+  10%         {transform:translateY(-1px) scale(1.05);}
+  13%         {transform:translateY(-3px) scale(1.12);}
+}
+@keyframes tabGlow{
+  0%,100%{box-shadow:3px 0 12px rgba(176,20,24,0.25);}
+  50%    {box-shadow:3px 0 22px rgba(235,34,38,0.50),0 0 0 2px rgba(235,34,38,0.18);}
+}
+.sidebar-pull-tab{
+  position:fixed;left:0;top:50%;
+  transform:translateY(-50%);
+  width:26px;height:72px;
+  background:var(--raf-red);
+  border-radius:0 10px 10px 0;
+  cursor:pointer;z-index:102;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.25s var(--ease-out),background 0.15s;
+  animation:tabGlow 2.8s ease-in-out infinite;
+}
+.sidebar-pull-tab.visible{opacity:1;pointer-events:auto;}
+.sidebar-pull-tab:hover{background:var(--raf-red-dark);}
+
+/* The + icon */
+.pull-plus{
+  font-size:22px;font-weight:300;line-height:1;
+  color:#fff;user-select:none;
+  animation:jumpPlus 4s ease-in-out infinite;
+}
+.sidebar-pull-tab:hover .pull-plus{animation-play-state:paused;}
+
+/* "Open navigation" tooltip on hover */
+.sidebar-pull-tab::before{
+  content:'Open navigation';
+  position:absolute;left:30px;top:50%;transform:translateY(-50%);
+  background:var(--raf-red);color:#fff;
+  font-family:var(--font-sans);font-size:clamp(12px,1.5vw,13px);font-weight:500;
+  padding:5px 12px;border-radius:0 var(--radius-md) var(--radius-md) 0;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity 0.18s;
+  box-shadow:4px 2px 12px rgba(176,20,24,0.18);
+}
+.sidebar-pull-tab:hover::before{opacity:1;}
+@media(max-width:768px){.sidebar-pull-tab{display:none;}}
+
+/* ── DESKTOP COLLAPSED STATE ── */
+@media(min-width:769px){
+  body.nav-collapsed .sidebar{transform:translateX(-100%);}
+  body.nav-collapsed .main{margin-left:0;}
+  body.nav-collapsed .topbar{padding-left:40px;}
+}
+
 /* Hamburger */
 .hamburger{
   display:none;position:fixed;top:12px;left:12px;z-index:200;
@@ -110,14 +179,14 @@ body{
 }
 
 /* Main */
-.main{margin-left:var(--sidebar-w);flex:1;min-width:0;overflow-x:clip;contain:inline-size}
-.content{max-width:1200px;margin:0 auto;padding:40px 32px;box-sizing:border-box}
+.main{margin-left:var(--sidebar-w);flex:1;min-width:0;overflow-x:clip;contain:inline-size;transition:margin-left 0.32s var(--ease-out);}
+.content{max-width:1380px;margin:0 auto;padding:40px 6.5%;box-sizing:border-box}
 .content *{min-width:0}
 
 /* ── HEADER BANNER ── */
 .banner{
   background:var(--raf-navy);position:relative;overflow:hidden;
-  padding:40px 40px 32px;
+  padding:40px 6.5% 32px;
 }
 .banner::after{content:'';position:absolute;bottom:0;left:0;right:0;height:4px;background:var(--raf-red)}
 .banner::before{
@@ -125,7 +194,7 @@ body{
   width:480px;height:480px;border-radius:50%;
   background:rgba(7,90,170,0.35);pointer-events:none;
 }
-.banner-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+.banner-inner{max-width:1380px;margin:0 auto;position:relative;z-index:1}
 .banner-eyebrow{
   display:inline-flex;align-items:center;gap:8px;
   font-size:clamp(11px,1.5vw,13px);font-weight:600;letter-spacing:0.12em;text-transform:uppercase;
@@ -144,6 +213,10 @@ body{
 .banner-subtitle{
   font-size:clamp(15px,2vw,18px);font-weight:300;line-height:1.7;
   color:rgba(185,207,237,0.92);max-width:620px;
+}
+.banner-tagline{
+  font-size:clamp(15px,2vw,18px);font-weight:500;
+  color:#fff;letter-spacing:0.01em;margin-bottom:12px;
 }
 
 /* ── SECTION HEADERS ── */
@@ -240,6 +313,10 @@ body{
   border-radius:var(--radius-lg);
   -webkit-overflow-scrolling:touch;
 }
+.tall-wrap{
+  overflow-y:auto;
+  max-height:75vh;
+}
 .data-table{
   width:100%;border-collapse:collapse;
   font-size:clamp(14px,2vw,16px);
@@ -251,15 +328,16 @@ body{
   letter-spacing:0.04em;text-transform:uppercase;
   color:var(--color-text-tertiary);text-align:left;
   background:var(--color-bg);
-  border-bottom:1px solid var(--color-border);
+  border-bottom:2px solid var(--color-border-strong);
   white-space:nowrap;position:sticky;top:0;cursor:pointer;
+  z-index:3;
 }
 .data-table thead th:hover{color:var(--color-text-primary)}
 .data-table thead th.sort-asc::after{content:' ↑';color:var(--raf-blue)}
 .data-table thead th.sort-desc::after{content:' ↓';color:var(--raf-blue)}
 .data-table tbody tr{border-bottom:1px solid var(--color-border);transition:background var(--dur-fast)}
 .data-table tbody tr:last-child{border-bottom:none}
-.data-table tbody tr:hover{background:var(--color-bg)}
+.data-table tbody tr:hover{background:#fff}
 .data-table tbody td{
   padding:12px 14px;color:var(--color-text-primary);
   font-size:clamp(14px,2vw,16px);
@@ -501,6 +579,32 @@ body{
   object-fit:cover;
 }
 
+/* ── STICKY FROZEN COLUMNS (checkbox + Row ID + Title + Author) ── */
+.sc0,.sc1,.sc2{position:sticky;z-index:2;}
+
+.sc0{left:0;   width:50px; min-width:50px; max-width:50px;}
+.sc1{left:50px; width:94px; min-width:94px; max-width:94px;}
+.sc2{left:144px;width:240px;min-width:240px;max-width:240px;
+     border-right:1.5px solid rgba(1,41,92,0.13);}
+
+/* Thead sticky: needs opaque bg so scrolling rows don't bleed through header */
+.data-table thead th.sc0,
+.data-table thead th.sc1,
+.data-table thead th.sc2{z-index:4;background:var(--color-bg);}
+
+/* Tbody: opaque bg required for sticky to work */
+.data-table tbody td.sc0,
+.data-table tbody td.sc1,
+.data-table tbody td.sc2{background:var(--color-bg);}
+
+.data-table tbody tr:hover td.sc0,
+.data-table tbody tr:hover td.sc1,
+.data-table tbody tr:hover td.sc2{background:#fff;}
+
+.data-table tbody tr.selected-row td.sc0,
+.data-table tbody tr.selected-row td.sc1,
+.data-table tbody tr.selected-row td.sc2{background:#EEFAF5;}
+
 /* ── FOOTNOTE ── */
 .footnote{
   font-size:clamp(12px,1.6vw,13px);color:var(--color-text-tertiary);
@@ -521,7 +625,7 @@ body{
   padding:20px 32px;text-align:center;
 }
 .footer-banner::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--raf-red)}
-.footer-banner-inner{max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:4px}
+.footer-banner-inner{max-width:1380px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:4px}
 .footer-label{font-size:clamp(11px,1.5vw,12px);font-weight:600;letter-spacing:0.10em;text-transform:uppercase;color:rgba(109,163,206,0.85)}
 .footer-value{font-family:var(--font-mono);font-size:clamp(15px,2vw,17px);font-weight:500;color:#fff;letter-spacing:-0.01em}
 .footer-tagline{font-size:clamp(11px,1.5vw,12px);color:rgba(185,207,237,0.50);margin-top:2px;letter-spacing:0.02em}
@@ -622,7 +726,7 @@ body{
   .hamburger{display:flex}
   .main{margin-left:0}
   .topbar{padding-left:60px}
-  .content{padding:24px 16px}
+  .content{padding:24px 10px}
   .banner{padding:28px 20px 24px}
   .metrics-grid{grid-template-columns:repeat(2,1fr)}
   .chart-grid{grid-template-columns:1fr}
@@ -644,17 +748,21 @@ body{
 #printListBtn{cursor:pointer}
 </style>
 </head>
-<body>
+<body class="nav-collapsed">
 
 <!-- Hamburger -->
 <button class="hamburger" id="hamburger" aria-label="Open navigation" onclick="toggleSidebar()">☰</button>
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar-pull-tab visible" id="sidebarPullTab" onclick="toggleDesktopNav()" role="button" aria-label="Open navigation">
+  <span class="pull-plus">+</span>
+</div>
 
 <!-- SIDEBAR -->
 <aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="wordmark">Stonecroft</div>
-    <div class="version">Reading Intelligence</div>
+  <div class="sidebar-logo" style="position:relative">
+    <div class="wordmark">HRK/Stonecroft</div>
+    <div class="version">Reading Dashboard</div>
+    <button class="sidebar-collapser" onclick="toggleDesktopNav()" title="Collapse navigation" aria-label="Collapse navigation">‹</button>
   </div>
   <nav>
     <div class="nav-section">
@@ -689,7 +797,7 @@ body{
 
   <!-- TOP BAR -->
   <div class="topbar">
-    <span class="topbar-title">Henry Kravis — Deep Research Reading Report</span>
+    <span class="topbar-title">Henry Kravis Suggested Reading Dashboard</span>
     <span class="topbar-spacer"></span>
     <span class="topbar-badge" id="topbarSelBadge" style="display:none"></span>
     <span class="topbar-badge">60 Books · 21 Non-Book Items</span>
@@ -699,8 +807,9 @@ body{
   <div class="banner">
     <div class="banner-inner">
       <div class="banner-eyebrow">Stonecroft Family Office</div>
-      <h1 class="banner-title">Henry Kravis Deep Research Reading Dashboard</h1>
-      <p class="banner-subtitle">A curated, filter-designed reading intelligence report spanning leadership, society, institutions, technology, geopolitics, markets, and long-horizon capital allocation. 60 books · 21 non-book inputs · 12 hidden gems · 12 reading paths.</p>
+      <h1 class="banner-title">Henry Kravis Suggested Reading Dashboard</h1>
+      <p class="banner-tagline">60 books · 21 non-book inputs · 12 hidden gems · 12 reading paths.</p>
+      <p class="banner-subtitle">A curated, filter-designed reading intelligence report spanning leadership, society, institutions, technology, geopolitics, markets, and long-horizon capital allocation.</p>
     </div>
   </div>
 
@@ -804,13 +913,13 @@ body{
         </span>
       </div>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap tall-wrap">
       <table class="data-table" id="masterTable">
         <thead>
           <tr>
-            <th style="width:36px">✓</th>
-            <th onclick="sortMaster('id')" style="white-space:nowrap">Row ID</th>
-            <th onclick="sortMaster('title')">Title</th>
+            <th class="sc0" style="width:36px">✓</th>
+            <th class="sc1" onclick="sortMaster('id')" style="white-space:nowrap">Row ID</th>
+            <th class="sc2" onclick="sortMaster('title')">Title</th>
             <th onclick="sortMaster('author')">Author</th>
             <th onclick="sortMaster('year')" style="white-space:nowrap">Year</th>
             <th onclick="sortMaster('cat')" style="white-space:nowrap">Category</th>
@@ -857,13 +966,13 @@ body{
         </span>
       </div>
     </div>
-    <div class="table-wrap">
+    <div class="table-wrap tall-wrap">
       <table class="data-table" id="nonBookTable">
         <thead>
           <tr>
-            <th style="width:36px">✓</th>
-            <th style="white-space:nowrap">Row ID</th>
-            <th>Title</th>
+            <th class="sc0" style="width:36px">✓</th>
+            <th class="sc1" style="white-space:nowrap">Row ID</th>
+            <th class="sc2">Title</th>
             <th>Author</th>
             <th style="white-space:nowrap">Year</th>
             <th style="white-space:nowrap">Category</th>
@@ -1072,12 +1181,6 @@ body{
       <p class="section-desc">Six curated five-book lists organized by distinct strategic purpose.</p>
     </div>
     <div class="reco-grid animate-in" id="recoGrid"></div>
-    <div class="card animate-in" style="margin-top:20px;background:var(--raf-blue-tint);border-color:var(--accent-200)">
-      <div class="card-title" style="font-family:var(--font-serif);font-size:clamp(16px,2.5vw,19px)">Optional Fiction Extension Prompt</div>
-      <p style="margin-top:8px;font-size:clamp(14px,2vw,16px);color:var(--color-text-secondary);line-height:1.7;font-style:italic;border-left:3px solid var(--raf-red);padding-left:14px;margin-left:4px">
-        "Using the same Henry Reading Filter, recommend fiction books that help me think about society, power, leadership, technology, institutions, human behavior, tolerance, Grand Strategy, and the future. Focus on novels that provide durable insight, not merely entertainment. Use the same table structure where possible, but mark each item as fiction."
-      </p>
-    </div>
   </section>
 
   </div><!-- /content -->
@@ -1086,7 +1189,7 @@ body{
   <div class="footer-banner">
     <div class="footer-banner-inner">
       <div class="footer-label">Stonecroft Family Office</div>
-      <div class="footer-value">Henry Kravis Deep Research Reading Report</div>
+      <div class="footer-value">Henry Kravis Suggested Reading Dashboard</div>
       <div class="footer-tagline">60 books · 21 non-book inputs · 12 hidden gems · 12 theme-based reading paths · Grand Strategy framework</div>
     </div>
   </div>
@@ -1357,6 +1460,12 @@ function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sidebarOverlay').classList.toggle('open');
 }
+function toggleDesktopNav(){
+  if(window.innerWidth<=768) return;
+  const collapsed = document.body.classList.toggle('nav-collapsed');
+  const tab = document.getElementById('sidebarPullTab');
+  if(tab) tab.classList.toggle('visible', collapsed);
+}
 function setActive(el){
   document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
   el.classList.add('active');
@@ -1401,11 +1510,9 @@ function renderMasterRows(){
   const tbody=document.getElementById('masterTableBody');
   tbody.innerHTML=data.map(b=>`
     <tr class="${selected.has(b.id)?'selected-row':''}">
-      <td><label class="cb-wrap"><input type="checkbox" class="cb-input" ${selected.has(b.id)?'checked':''} onchange="toggleBook('${b.id}',this)"/></label></td>
-      <td class="mono">${b.id}</td>
-      <td style="font-weight:600;color:var(--raf-navy)">
-        ${b.full}
-      <td style="font-weight:600;color:var(--raf-navy)">
+      <td class="sc0"><label class="cb-wrap"><input type="checkbox" class="cb-input" ${selected.has(b.id)?'checked':''} onchange="toggleBook('${b.id}',this)"/></label></td>
+      <td class="mono sc1">${b.id}</td>
+      <td class="sc2" style="font-weight:600;color:var(--raf-navy)">
         ${b.full}
         <img
           src="https://covers.openlibrary.org/b/isbn/${COVER_ISBNS[b.id]}-M.jpg"
@@ -1592,9 +1699,9 @@ function renderNonBookRows(){
   document.getElementById('nbCount').textContent=data.length;
   document.getElementById('nonBookBody').innerHTML=data.map(b=>`
     <tr>
-      <td><label class="cb-wrap"><input type="checkbox" class="cb-input" ${selected.has(b.id)?'checked':''} onchange="toggleBook('${b.id}',this)"/></label></td>
-      <td class="mono">${b.id}</td>
-      <td style="font-weight:600;color:var(--raf-navy);max-width:220px">${b.title}</td>
+      <td class="sc0"><label class="cb-wrap"><input type="checkbox" class="cb-input" ${selected.has(b.id)?'checked':''} onchange="toggleBook('${b.id}',this)"/></label></td>
+      <td class="mono sc1">${b.id}</td>
+      <td class="sc2" style="font-weight:600;color:var(--raf-navy)">${b.title}</td>
       <td>${b.author}</td>
       <td class="mono">${b.year}</td>
       <td>${catBadge(b.cat)}</td>
