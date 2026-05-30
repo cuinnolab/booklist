@@ -250,6 +250,7 @@ body{
   padding:20px;
   transition:box-shadow var(--dur-base) var(--ease-out);
   position:relative;overflow:hidden;
+  display:flex;flex-direction:column;
 }
 .metric-card::before{
   content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -259,6 +260,7 @@ body{
 .metric-label{
   font-size:clamp(11px,1.5vw,12px);font-weight:600;letter-spacing:0.06em;
   text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px;
+  min-height:2.8em;
 }
 .metric-value{
   font-family:var(--font-mono);
